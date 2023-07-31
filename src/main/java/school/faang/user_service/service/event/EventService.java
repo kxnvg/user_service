@@ -85,6 +85,5 @@ public class EventService {
     @Transactional
     public void cancelEvent(long id) {
         getEventById(id).setStatus(EventStatus.CANCELED);
-
     }
 }
