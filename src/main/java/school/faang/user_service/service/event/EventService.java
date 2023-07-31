@@ -2,9 +2,11 @@ package school.faang.user_service.service.event;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import school.faang.user_service.dto.event.EventDto;
 import school.faang.user_service.dto.event.EventFilterDto;
 import school.faang.user_service.entity.event.Event;
+import school.faang.user_service.entity.event.EventStatus;
 import school.faang.user_service.exception.DataValidationException;
 import school.faang.user_service.filter.event.EventFilter;
 import school.faang.user_service.mapper.event.EventMapper;
@@ -78,5 +80,11 @@ public class EventService {
     private Event getEventById(Long id) {
         return eventRepository.findById(id)
                 .orElseThrow(() -> new DataValidationException("Event not found"));
+    }
+
+    @Transactional
+    public void cancelEvent(long id) {
+        getEventById(id).setStatus(EventStatus.CANCELED);
+
     }
 }

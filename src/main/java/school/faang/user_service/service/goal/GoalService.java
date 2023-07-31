@@ -56,4 +56,8 @@ public class GoalService {
                     .forEach((fil) -> fil.apply(dtoList, filter));
         }
     }
+
+    public void deleteGoal(long id) {
+        goalRepository.deleteById(id);
+    }
 }
