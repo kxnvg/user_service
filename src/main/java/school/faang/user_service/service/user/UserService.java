@@ -1,5 +1,6 @@
 package school.faang.user_service.service.user;
 
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import school.faang.user_service.entity.User;
@@ -22,7 +23,7 @@ public class UserService {
     private final EventService eventService;
     private final MentorshipService mentorshipService;
 
-    public UserService(UserRepository userRepository, GoalService goalService, EventService eventService, MentorshipService mentorshipService) {
+    public UserService(UserRepository userRepository, GoalService goalService, @Lazy EventService eventService, MentorshipService mentorshipService) {
         this.userRepository = userRepository;
         this.goalService = goalService;
         this.eventService = eventService;
@@ -59,7 +60,6 @@ public class UserService {
 
         mentorshipService.deleteMentees(userId);
         user.getSetGoals().clear();
-
     }
 
     private void obfuscateProfileData(long userId) {
