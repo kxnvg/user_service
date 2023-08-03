@@ -10,6 +10,7 @@ import school.faang.user_service.exception.DataValidationException;
 import school.faang.user_service.repository.goal.GoalRepository;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.internal.verification.VerificationModeFactory.times;
 
 class GoalServiceTest {
 
@@ -38,5 +39,12 @@ class GoalServiceTest {
         assertThrows(DataValidationException.class, () -> {
             service.getGoalsByUser(0L, null);
         });
+    }
+
+    @Test
+    public void deleteGoalValidId() {
+        long goalId = 1L;
+        service.deleteGoal(goalId);
+        Mockito.verify(goalRepository, times(1)).deleteById(goalId);
     }
 }

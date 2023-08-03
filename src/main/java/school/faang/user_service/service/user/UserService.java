@@ -56,15 +56,13 @@ public class UserService {
         }
         user.getParticipatedEvents().removeIf(event -> event.getStatus() == EventStatus.PLANNED);
 
-        obfuscateProfileData(userId);
+        obfuscateProfileData(user);
 
         mentorshipService.deleteMentees(userId);
         user.getSetGoals().clear();
     }
 
-    private void obfuscateProfileData(long userId) {
-        User user = getUserById(userId);
-
+    private void obfuscateProfileData(User user) {
         user.setActive(false);
         user.setUsername("*".repeat(user.getUsername().length()));
         user.setEmail(null);
@@ -76,7 +74,7 @@ public class UserService {
         user.setUserProfilePic(null);
     }
 
-    private User getUserById(long userId) {
+    public User getUserById(long userId) {
         return userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("User by id: " + userId + " not found"));
     }
 }
