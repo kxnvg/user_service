@@ -8,6 +8,7 @@ import school.faang.user_service.entity.event.Event;
 import school.faang.user_service.entity.event.EventStatus;
 import school.faang.user_service.entity.goal.Goal;
 import school.faang.user_service.entity.goal.GoalStatus;
+import school.faang.user_service.exception.UserAlreadyDeactivated;
 import school.faang.user_service.exception.UserNotFoundException;
 import school.faang.user_service.repository.UserRepository;
 import school.faang.user_service.service.MentorshipService;
@@ -37,39 +38,64 @@ public class UserService {
         return userRepository.countOwnedSkills(userId, skillIds) == skillIds.size();
     }
 
-    @Transactional
-    public void deactivateProfile(long userId) {
-        User user = getUserById(userId);
-
+    private void deleteActiveGoalsWithOneUser(User user) {
         for (Goal goal : user.getGoals()) {
             if ((goal.getStatus() == GoalStatus.ACTIVE) && (goal.getUsers().size() == 1)) {
                 goalService.deleteGoal(goal.getId());
             }
         }
-        user.getGoals().removeIf(goal -> goal.getStatus() == GoalStatus.ACTIVE);
+    }
 
+    private void discardActiveGoals(User user) {
+        user.getGoals().removeIf(goal -> goal.getStatus() == GoalStatus.ACTIVE);
+    }
+
+    private void cancelAndDeleteOwnedPlannedEvents(User user) {
         for (Event event : user.getOwnedEvents()) {
             if (event.getStatus() == EventStatus.PLANNED) {
                 eventService.cancelEvent(event.getId());
                 eventService.deleteEvent(event.getId());
             }
         }
+    }
+
+    private void discardPlannedGoals(User user) {
         user.getParticipatedEvents().removeIf(event -> event.getStatus() == EventStatus.PLANNED);
+    }
 
-        obfuscateProfileData(user);
-
-        mentorshipService.deleteMentees(userId);
+    private void discardSetGoals(User user) {
         user.getSetGoals().clear();
     }
 
-    private void obfuscateProfileData(User user) {
+    private void discardMentees(User user) {
+        mentorshipService.deleteMentees(user.getId());
+    }
+
+    @Transactional
+    public void deactivateUser(long userId) {
+        User user = getUserById(userId);
+
+        if (!user.isActive()) {
+            throw new UserAlreadyDeactivated("User with id: " + userId + " is already deactivated");
+        }
+
+        deleteActiveGoalsWithOneUser(user);
+        discardActiveGoals(user);
+        cancelAndDeleteOwnedPlannedEvents(user);
+        discardPlannedGoals(user);
+
+        obfuscateUserData(user);
+        discardSetGoals(user);
+        discardMentees(user);
+    }
+
+    private void obfuscateUserData(User user) {
         user.setActive(false);
         user.setUsername("*".repeat(user.getUsername().length()));
-        user.setEmail(null);
+        user.setEmail(user.getEmail().replaceAll("(\\w{1,2})(\\w+)(@.*)", "$1****$3"));
         user.setPhone(null);
         user.setAboutMe(null);
         user.setCity(null);
-        user.setCountry(null);
         user.setExperience(null);
         user.setUserProfilePic(null);
     }

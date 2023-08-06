@@ -14,6 +14,8 @@ import school.faang.user_service.entity.event.Event;
 import school.faang.user_service.entity.event.EventStatus;
 import school.faang.user_service.entity.goal.Goal;
 import school.faang.user_service.entity.goal.GoalStatus;
+import school.faang.user_service.exception.UserAlreadyDeactivated;
+import school.faang.user_service.mapper.UserMapper;
 import school.faang.user_service.repository.UserRepository;
 import school.faang.user_service.service.MentorshipService;
 import school.faang.user_service.service.event.EventService;
@@ -37,6 +39,8 @@ class UserServiceTest {
     private EventService eventService;
     @Mock
     private MentorshipService mentorshipService;
+    @Spy
+    private UserMapper userMapper;
     @InjectMocks
     @Spy
     private UserService userService;
@@ -48,7 +52,7 @@ class UserServiceTest {
         user = User.builder()
                 .id(1L)
                 .username("test")
-                .email("a@a.com")
+                .email("abcd@a.com")
                 .phone("8-800-555-35-35")
                 .password("Qdsf32jsdfad")
                 .active(true)
@@ -71,7 +75,7 @@ class UserServiceTest {
     }
 
     @Test
-    void deactivateProfileValidTest() {
+    void deactivateUserValidTest() {
         User user2 = User.builder().id(2L).build();
         User user3 = User.builder().id(3L).build();
 
@@ -113,7 +117,7 @@ class UserServiceTest {
 
         Mockito.doReturn(user).when(userService).getUserById(user.getId());
 
-        userService.deactivateProfile(user.getId());
+        userService.deactivateUser(user.getId());
 
         Mockito.verify(userService, Mockito.atLeast(1))
                 .getUserById(Mockito.anyLong());
@@ -136,6 +140,15 @@ class UserServiceTest {
                 .deleteMentees(user.getId());
 
         assertEquals("****", user.getUsername());
+        assertEquals("ab****@a.com", user.getEmail());
         assertEquals(user.getSetGoals().size(), 0);
+    }
+
+    @Test
+    void deactivateUserAlreadyDeactivatedUserTest() {
+        user.setActive(false);
+        Mockito.doReturn(user).when(userService).getUserById(user.getId());
+
+        assertThrows(UserAlreadyDeactivated.class, () -> userService.deactivateUser(user.getId()));
     }
 }
