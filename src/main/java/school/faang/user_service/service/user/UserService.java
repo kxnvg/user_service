@@ -8,7 +8,7 @@ import school.faang.user_service.entity.event.Event;
 import school.faang.user_service.entity.event.EventStatus;
 import school.faang.user_service.entity.goal.Goal;
 import school.faang.user_service.entity.goal.GoalStatus;
-import school.faang.user_service.exception.UserAlreadyDeactivated;
+import school.faang.user_service.exception.UserAlreadyDeactivatedException;
 import school.faang.user_service.exception.UserNotFoundException;
 import school.faang.user_service.repository.UserRepository;
 import school.faang.user_service.service.MentorshipService;
@@ -76,7 +76,7 @@ public class UserService {
         User user = getUserById(userId);
 
         if (!user.isActive()) {
-            throw new UserAlreadyDeactivated("User with id: " + userId + " is already deactivated");
+            throw new UserAlreadyDeactivatedException("User with id: " + userId + " is already deactivated");
         }
 
         deleteActiveGoalsWithOneUser(user);

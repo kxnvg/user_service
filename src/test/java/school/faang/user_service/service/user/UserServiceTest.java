@@ -14,7 +14,7 @@ import school.faang.user_service.entity.event.Event;
 import school.faang.user_service.entity.event.EventStatus;
 import school.faang.user_service.entity.goal.Goal;
 import school.faang.user_service.entity.goal.GoalStatus;
-import school.faang.user_service.exception.UserAlreadyDeactivated;
+import school.faang.user_service.exception.UserAlreadyDeactivatedException;
 import school.faang.user_service.mapper.UserMapper;
 import school.faang.user_service.repository.UserRepository;
 import school.faang.user_service.service.MentorshipService;
@@ -149,6 +149,6 @@ class UserServiceTest {
         user.setActive(false);
         Mockito.doReturn(user).when(userService).getUserById(user.getId());
 
-        assertThrows(UserAlreadyDeactivated.class, () -> userService.deactivateUser(user.getId()));
+        assertThrows(UserAlreadyDeactivatedException.class, () -> userService.deactivateUser(user.getId()));
     }
 }
