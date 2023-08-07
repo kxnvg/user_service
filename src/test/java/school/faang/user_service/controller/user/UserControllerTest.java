@@ -4,30 +4,31 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.context.WebApplicationContext;
-import school.faang.user_service.service.user.UserService;
 
-@WebMvcTest(UserController.class)
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 @ExtendWith(MockitoExtension.class)
 public class UserControllerTest {
     private MockMvc mockMvc;
     @InjectMocks
     private UserController userController;
-    @Mock
-    private UserService userService;
-    private WebApplicationContext webApplicationContext;
 
     @BeforeEach
     public void setup() {
         this.mockMvc = MockMvcBuilders.standaloneSetup(userController).build();
     }
+
     @Test
-    public void userDeactivateTest() throws Exception {
+    public void userDeactivateValidTest() throws Exception {
         long userId = 1L;
+
+        mockMvc.perform(put("/users/{userId}/deactivate", userId)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
     }
 }
