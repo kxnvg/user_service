@@ -3,7 +3,7 @@ package school.faang.user_service.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import school.faang.user_service.entity.User;
-import school.faang.user_service.exception.UserNotFoundException;
+import school.faang.user_service.exception.EntityNotFoundException;
 import school.faang.user_service.repository.mentorship.MentorshipRepository;
 
 @Service
@@ -17,6 +17,6 @@ public class MentorshipService {
     }
 
     public User findById(long userId) {
-        return mentorshipRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("Mentor by id: " + userId + " not found"));
+        return mentorshipRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("Mentor by id: " + userId + " not found"));
     }
 }

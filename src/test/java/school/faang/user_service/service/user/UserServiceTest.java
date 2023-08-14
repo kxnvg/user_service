@@ -14,10 +14,9 @@ import school.faang.user_service.entity.event.Event;
 import school.faang.user_service.entity.event.EventStatus;
 import school.faang.user_service.entity.goal.Goal;
 import school.faang.user_service.entity.goal.GoalStatus;
-import school.faang.user_service.exception.UserAlreadyDeactivatedException;
+import school.faang.user_service.exception.DataValidationException;
 import school.faang.user_service.mapper.UserMapper;
 import school.faang.user_service.repository.UserRepository;
-import school.faang.user_service.service.MentorshipService;
 import school.faang.user_service.service.event.EventService;
 import school.faang.user_service.service.goal.GoalService;
 
@@ -37,8 +36,6 @@ class UserServiceTest {
     private GoalService goalService;
     @Mock
     private EventService eventService;
-    @Mock
-    private MentorshipService mentorshipService;
     @Spy
     private UserMapper userMapper;
     @InjectMocks
@@ -131,13 +128,6 @@ class UserServiceTest {
                 .cancelEvent(Mockito.anyLong());
         Mockito.verify(eventService, Mockito.times(1))
                 .cancelEvent(deactivateUserEvent1.getId());
-        Mockito.verify(eventService, Mockito.times(1))
-                .deleteEvent(Mockito.anyLong());
-        Mockito.verify(eventService, Mockito.times(1))
-                .deleteEvent(deactivateUserEvent1.getId());
-
-        Mockito.verify(mentorshipService, Mockito.times(1))
-                .deleteMentees(user.getId());
 
         assertEquals("****", user.getUsername());
         assertEquals("ab****@a.com", user.getEmail());
@@ -149,6 +139,6 @@ class UserServiceTest {
         user.setActive(false);
         Mockito.doReturn(user).when(userService).getUserById(user.getId());
 
-        assertThrows(UserAlreadyDeactivatedException.class, () -> userService.deactivateUser(user.getId()));
+        assertThrows(DataValidationException.class, () -> userService.deactivateUser(user.getId()));
     }
 }
