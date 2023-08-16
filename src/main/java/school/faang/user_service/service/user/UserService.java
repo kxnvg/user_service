@@ -43,7 +43,7 @@ public class UserService {
             throw new DataValidationException("User with id: " + userId + " is already deactivated");
         }
 
-        deleteActiveGoalsWithOneUser(user);
+        holdActiveGoalsWithOneUser(user);
         discardActiveGoals(user);
         cancelAndDeleteOwnedPlannedEvents(user);
         discardPlannedGoals(user);
@@ -52,10 +52,10 @@ public class UserService {
         discardMentees(user);
     }
 
-    private void deleteActiveGoalsWithOneUser(User user) {
+    private void holdActiveGoalsWithOneUser(User user) {
         for (Goal goal : user.getGoals()) {
             if ((goal.getStatus() == GoalStatus.ACTIVE) && (goal.getUsers().size() == 1)) {
-                goalService.deleteGoal(goal.getId());
+                goalService.setGoalStatusOnHold(goal.getId());
             }
         }
     }
@@ -77,6 +77,7 @@ public class UserService {
         user.getParticipatedEvents()
                 .removeIf(
                         event -> event.getStatus() == EventStatus.PLANNED
+                                || event.getStatus() == EventStatus.IN_PROGRESS
                 );
     }
 

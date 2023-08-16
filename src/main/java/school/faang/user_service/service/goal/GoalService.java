@@ -5,7 +5,9 @@ import org.springframework.stereotype.Service;
 import school.faang.user_service.dto.goal.GoalDto;
 import school.faang.user_service.dto.goal.GoalFilterDto;
 import school.faang.user_service.entity.goal.Goal;
+import school.faang.user_service.entity.goal.GoalStatus;
 import school.faang.user_service.exception.DataValidationException;
+import school.faang.user_service.exception.EntityNotFoundException;
 import school.faang.user_service.filter.goal.GoalFilter;
 import school.faang.user_service.mapper.goal.GoalMapper;
 import school.faang.user_service.repository.SkillRepository;
@@ -59,5 +61,15 @@ public class GoalService {
 
     public void deleteGoal(long id) {
         goalRepository.deleteById(id);
+    }
+
+    private Goal getGoalById(long id) {
+        return goalRepository
+                .findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Goal with id: " + id + " not found"));
+    }
+
+    public void setGoalStatusOnHold(long id) {
+        getGoalById(id).setStatus(GoalStatus.ON_HOLD);
     }
 }

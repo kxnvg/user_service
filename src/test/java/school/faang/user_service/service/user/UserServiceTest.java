@@ -120,11 +120,11 @@ class UserServiceTest {
                 .getUserById(Mockito.anyLong());
 
         Mockito.verify(goalService, Mockito.atLeast(1))
-                .deleteGoal(Mockito.anyLong());
+                .setGoalStatusOnHold(Mockito.anyLong());
         Mockito.verify(goalService, Mockito.times(1))
-                .deleteGoal(deactivateUserInGoal2.getId());
+                .setGoalStatusOnHold(deactivateUserInGoal2.getId());
 
-        Mockito.verify(eventService, Mockito.times(1))
+        Mockito.verify(eventService, Mockito.times(2))
                 .cancelEvent(Mockito.anyLong());
         Mockito.verify(eventService, Mockito.times(1))
                 .cancelEvent(deactivateUserEvent1.getId());
