@@ -66,7 +66,8 @@ public class UserService {
 
     private void cancelAndDeleteOwnedPlannedEvents(User user) {
         for (Event event : user.getOwnedEvents()) {
-            if (event.getStatus() == EventStatus.PLANNED) {
+            if (event.getStatus() == EventStatus.PLANNED
+                    || event.getStatus() == EventStatus.IN_PROGRESS) {
                 eventService.cancelEvent(event.getId());
             }
         }
@@ -76,7 +77,6 @@ public class UserService {
         user.getParticipatedEvents()
                 .removeIf(
                         event -> event.getStatus() == EventStatus.PLANNED
-                                || event.getStatus() == EventStatus.IN_PROGRESS
                 );
     }
 
