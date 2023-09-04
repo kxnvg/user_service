@@ -66,8 +66,8 @@ public class UserService {
 
         holdActiveGoalsWithOneUser(user);
         discardActiveGoals(user);
-        cancelAndDeleteOwnedPlannedEvents(user);
-        discardPlannedGoals(user);
+        cancelOwnedPlannedEvents(user);
+        discardPlannedEvents(user);
 
         userMapper.obfuscateUser(user);
         discardMentees(user);
@@ -85,7 +85,7 @@ public class UserService {
         user.getGoals().removeIf(goal -> goal.getStatus() == GoalStatus.ACTIVE);
     }
 
-    private void cancelAndDeleteOwnedPlannedEvents(User user) {
+    private void cancelOwnedPlannedEvents(User user) {
         for (Event event : user.getOwnedEvents()) {
             if (event.getStatus() == EventStatus.PLANNED
                     || event.getStatus() == EventStatus.IN_PROGRESS) {
@@ -94,7 +94,7 @@ public class UserService {
         }
     }
 
-    private void discardPlannedGoals(User user) {
+    private void discardPlannedEvents(User user) {
         user.getParticipatedEvents()
                 .removeIf(
                         event -> event.getStatus() == EventStatus.PLANNED
