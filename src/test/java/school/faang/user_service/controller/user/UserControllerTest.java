@@ -1,6 +1,5 @@
 package school.faang.user_service.controller.user;
 
-<<<<<<< HEAD
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
